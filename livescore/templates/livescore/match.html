@@ -1,0 +1,31 @@
+{% extends 'livescore/base.html' %}
+
+{% block content %}
+Predictions for <br/>
+<h3 style="display: inline">{{ match.get_home_team_display }} - {{ match.get_away_team_display }}</h3>&nbsp;&nbsp;
+{% if match.status == 'L' %}<h5 style="display: inline; color: red">(live: {% if match.minutes == -1 %}HT{% else %}{{ match.minutes}}'{% endif %})</h5>{% endif %}<br/>
+({% if match.status == 'P'%}Postponed, {% endif %}{{ match.match_time|date:'d.m.Y H:i' }})
+<div class="table-responsive px-0 py-3">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th class="text-end">User</th>
+                <th class="text-center">Prediction</th>
+                <th class="text-center">Score</th>
+                <th class="text-center">Points</th>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+        {% for prediction in predictions %}
+            <tr class='clickable-row' data-href="{% url 'user' prediction.user.userid %}">
+                <td class="text-end fw-bold">{{ prediction.user }}</td>
+                <td class="text-center">{{ prediction.home_goals }}:{{ prediction.away_goals }}</td>
+                <td class="text-center">{{ match.home_goals }}:{{ match.away_goals }}</td>
+                <td class="text-center fw-bold">{% if match.status == 'F' or match.status == 'L' %}{{ prediction.points }}{% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

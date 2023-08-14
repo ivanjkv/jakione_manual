@@ -1,0 +1,34 @@
+{% extends 'livescore/base.html' %}
+
+{% load custom_tags %}
+
+{% block content %}
+<div class="row px-0 pt-3">
+
+<div class="table-responsive px-0 pb-3">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th class="text-end">#</th>
+                <th class="text-center">Chg.</th>
+                <th>User</th>
+                <th>Total points</th>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+        {% for rank in rankings %}
+            <tr class='clickable-row' data-href="{% url 'user' rank.user.userid %}">
+                <td class="text-end fw-bold">{{ forloop.counter }}</td>
+                <td class="text-center">
+                    {% if rank.change > 0 %}<div class="fw-bold text-danger"><i class="bi bi-arrow-down"></i>{{ rank.change|abs }}</div>
+                    {% elif rank.change < 0 %}<div class="fw-bold text-success"><i class="bi bi-arrow-up"></i>{{ rank.change|abs }}</div>{% endif %}
+                </td>
+                <td>{{ rank.user }}</td>
+                <td class="align-middle">{{ rank.points }}{% if rank.points_live %}<span class="text-success small">&nbsp;&nbsp;+{{ rank.points_live }}{% endif %}</span></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

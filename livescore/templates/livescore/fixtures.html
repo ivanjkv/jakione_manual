@@ -1,0 +1,55 @@
+{% extends 'livescore/base.html' %}
+
+{% block content %}
+<div id="carouselRounds" class="carousel slide px-0 py-3" >
+    <div class="carousel-inner">
+        {% for i, round in matches.items %}
+        <div class="carousel-item {% if i == current_gw %}active{% endif %}">
+            <h3>Round {{ i }}</h3>
+            <div class="table-responsive"><table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th class="text-end">Time</th>
+                        <th class="text-end">Home</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>Away</th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                {% for match in round %}
+                    <tr class='clickable-row' data-href="{% url 'match' match.matchid %}">
+                        <td class="text-end">{{ match.match_time|date:'d.m.Y H:i'  }}</td>
+                        <td class="text-end">{{ match.get_home_team_display }}</td>
+                        {% if match.status == 'S' or match.status == 'P' %}
+                        <td class="text-end"></td>
+                        <td class="text-center">-</td>
+                        <td></td>
+                        {% elif match.status == 'L' %}
+                        <td class="text-end text-danger fw-bold">{{ match.home_goals }}</td>
+                        <td class="text-center">-</td>
+                        <td class="text-danger fw-bold">{{ match.away_goals }}</td>
+                        {% else %}
+                        <td class="text-end fw-bold">{{ match.home_goals }}</td>
+                        <td class="text-center">-</td>
+                        <td class="fw-bold">{{ match.away_goals }}</td>
+                        {% endif %}
+                        <td>{{ match.get_away_team_display }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table></div>
+        </div>
+        {% endfor %}
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselRounds" data-bs-slide="prev" style="filter: invert(100%);">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselRounds" data-bs-slide="next" style="filter: invert(100%);">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+{% endblock %}
