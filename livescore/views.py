@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 
-from django.db.models import Min, Max, Sum
+from django.db.models import Min, Max, Sum, Avg
 from .models import Match, Prediction, User
 from .forms import UploadFileForm
 
@@ -72,13 +72,14 @@ def user(request, userid=''):
     user = User.objects.get(pk=userid)
     max_round = Prediction.objects.aggregate(Max('match__round'))['match__round__max']
     predictions = [Prediction.objects.filter(user__exact=userid).filter(match__round__exact=i+1).exclude(match__status__exact='P') for i in range(max_round)]
+    subtotals = [Prediction.objects.filter(user__exact=userid).filter(match__round__exact=i+1).aggregate(Sum('points'))['points__sum'] for i in range(max_round)]
     total = Prediction.objects.filter(user__exact=userid).aggregate(Sum('points'))['points__sum']
 
     return render(request, 'livescore/user.html', {
         'page_title': f'User {user}',
         'user': user,
         'total': total,
-        'predictions': predictions
+        'predictions': zip(predictions, subtotals)
     })
 
 def match(request, matchid=''):
@@ -87,11 +88,13 @@ def match(request, matchid=''):
     '''
     match = Match.objects.get(pk=matchid)
     predictions = Prediction.objects.filter(match__exact=matchid)
+    average = Prediction.objects.filter(match__exact=matchid).aggregate(Avg('points', default=0))['points__avg']
     
     return render(request, 'livescore/match.html', {
         'page_title': f'Match {match}',
         'match': match,
-        'predictions': predictions
+        'predictions': predictions,
+        'average': average
     })
 
 def privacy(request):

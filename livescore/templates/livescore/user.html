@@ -4,12 +4,13 @@
 Predictions from <br/>
 <h3 style="display: inline">{{ user.name }}</h3>&nbsp;&nbsp;<h4 style="display: inline">(total points: {{ total }})</h4><br/>
 <div class="table-responsive py-3">
-    {% for round_predictions in predictions %}
+    {% for round_predictions, subtotal in predictions %}
     <div class="accordion accordion-flush" id="accordionRounds">
         <div class="accordion-item">
           <h2 class="accordion-header" id="flush-heading{{ forloop.counter }}">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
-                    Round {{ forloop.counter }}       
+                    <span class="d-block w-75 text-start">Round {{ forloop.counter }}</span>
+                    <span class="d-block">Points: <strong>{{ subtotal }}</strong></span>
             </button>
           </h2>
           <div id="flush-collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="flush-heading{{ forloop.counter }}" data-bs-parent="#accordionRounds">
